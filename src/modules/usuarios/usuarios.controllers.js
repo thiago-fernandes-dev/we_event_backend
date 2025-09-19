@@ -1,4 +1,4 @@
-const usuarioService = require('./usuarios.js');
+const usuarioService = require('./usuarios.services.js');
 
 exports.getUsuariosController = async (req,  res)=>{
     try{
