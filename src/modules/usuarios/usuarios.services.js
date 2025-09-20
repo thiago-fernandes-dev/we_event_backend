@@ -10,11 +10,11 @@ const getUsuarioId = (id) => {
     if (!user) {
         console.log('não encontrado');
     }
-    return user
+    return user;
 };
 
 const criarUsuario = (nome, email, senha)=>{
-    usuariosServices.push({id: fakeId++, nome, email, senha});
+    usuariosServices.push({id: ++fakeId, nome, email, senha});
     return usuariosServices;
 };
 
@@ -34,8 +34,8 @@ const atualizarUsuario = (id, nome, email, senha)=>{
         return;
     }else{
         usuario.nome = nome || usuario.nome;
-        usuario.preco = email || usuario.email;
-        usuario.descricao = senha || usuario.senha;
+        usuario.email = email || usuario.email;
+        usuario.senha = senha || usuario.senha;
     }
 };
 
