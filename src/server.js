@@ -1,13 +1,17 @@
-require("dotenv").config();
 const express = require('express');
-const app = express();
+require('dotenv').config();
+const userRoutes = require('./modules/auth/user.routes');
+const ticketRoutes = require('./modules/tickets/ticket.routes');
 
-const PORT = process.env.PORT || 3450;
+const app = express();
+const PORT = process.env.PORT || 4250;
+const HOST = process.env.HOST || "localhost";
 
 app.use(express.json());
-const usuariosRoutes = require('./modules/usuarios/usuarios.routes');
-app.use('/api', usuariosRoutes);
 
-app.listen(PORT, ()=>{
-    console.log(`servidor rodando em http://localhost:${PORT}`);
-});
+app.use('/api/auth', userRoutes);
+app.use('/api', ticketRoutes);
+
+app.listen(PORT, () => {
+    console.log(`O servidor está rodando em http://${HOST}:${PORT}`);
+})
