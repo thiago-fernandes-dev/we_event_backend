@@ -17,7 +17,7 @@ exports.registrarUsuariosController = async (req, res) => {
             novoUsuario
         });
     } catch (error) {
-        console.error(`Erro ao tentar registrar um Usuário.`);
+        console.error(`Erro ao tentar cadastrar um Usuário.`);
         res.status(500).json('Erro Interno do Servidor.')
     }
 };
@@ -30,7 +30,7 @@ exports.loginController = async (req, res) => {
             return res.status(400).json({
                 error: 'campos obrigatórios incompletos - email ou senha'
             });
-        };
+        }
 
         const result = await usuarioServices.login(email, senha);
 

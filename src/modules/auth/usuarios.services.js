@@ -4,14 +4,14 @@ const bcrypt = require('bcrypt');
 const usuarios = require('../../baseDados/tempUsers');
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET;
-let IDUsuario = 2;
+let IDUsuario = 1;
 
 exports.registrarUsuario = async (nome, email, senha) => {
     try {
         if (!nome || !email || !senha) {
             throw new Error('nome ou email ou password não encontrados.');
         }
-        if (senha.length >= 6) {
+        if (senha.length <= 5) {
             throw new Error('senha deve possuir pelo menos 6 digitos');
         }
         // verificar se usuário já existe na base de dados.
@@ -25,7 +25,7 @@ exports.registrarUsuario = async (nome, email, senha) => {
 
         // adicionando o usuario
         const novoUsuario = {
-            id: IDUsuario++,
+            id: ++IDUsuario,
             nome,
             email,
             senha: cryptPassword,
