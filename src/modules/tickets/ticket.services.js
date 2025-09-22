@@ -76,7 +76,8 @@ const updateTicket = async ( id, evento ) => {
         const updatedTicket = await prisma.ticket.update({
             where: { id: ticketId },
             data: {
-                event: evento
+                event: evento,
+                updatedAt: new Date().toISOString()
             }
         });
 

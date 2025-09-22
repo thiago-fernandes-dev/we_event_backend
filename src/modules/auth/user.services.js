@@ -29,8 +29,7 @@ exports.createUser = async ( nome, email, senha ) => {
             data: {
                 name: nome,
                 email: email,
-                password: cryptPassword,
-                updatedAt: new Date().toISOString()
+                password: cryptPassword
             },
         });
 
@@ -115,14 +114,13 @@ exports.updateUser = async ( id, nome, email ,senha ) => {
             throw new Error('Usuário não encontrado no sistema.');
         }
 
-        if(senha) {
-            if(senha.length < 8){
-                throw new Error('Sua nova senha deverá possuir no mínimo 8 caracteres');
-            }
-            var newPassword = await bcrypt.hash(senha,10)
-        } else {
-            var newPassword = findUser.password;
+        if(senha && senha.length < 8) {
+            throw new Error('Sua nova senha deverá possuir no mínimo 8 caracteres');
         }
+
+        const newPassword = senha 
+        ? await bcrypt.hash( senha, 10 )
+        : findUser.password;
 
         console.log(nome, email, senha);
 

@@ -20,7 +20,7 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @default(now())
   tickets   Ticket[]
 }
 
@@ -29,6 +29,7 @@ model Ticket {
   uuid        String   @unique @default(uuid())
   event       String
   purchasedAt DateTime @default(now())
+  updatedAt   DateTime @default(now())
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
 }
