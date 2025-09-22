@@ -8,29 +8,29 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET;
 let IDUsuario = 1;
 
 if (!JWT_SECRET_KEY) {
-    logger.error('JWT SECRET não carregado!');
-    throw new Error('JWT SECRET não encontrada nas variáveis de ambiente.');
+    logger.error('JWT SECRET nao carregado!');
+    throw new Error('JWT SECRET nao encontrado nas variaveis de ambiente.');
 }
 
 exports.registrarUsuario = async (nome, email, senha) => {
     try {
         if (!nome || !email || !senha) {
-            logger.error('nome, email e senha são obrigatórios');
-            throw new Error('nome ou email ou password não encontrados.');
+            logger.error('nome, email e senha são obrigatorios');
+            throw new Error('nome ou email ou password nao encontrados.');
         }
         if (senha.length <= 5) {
             logger.error('senha deve possuir pelo menos 6 digitos');
             throw new Error('senha deve possuir pelo menos 6 digitos');
         }
-        // verificar se usuário já existe na base de dados.
+        // verificar se usuario já existe na base de dados.
         const user = usuarios.find((user) => user.email === email);
         if (user) {
-            logger.warn(`Usuário já cadastrado ${email}`);
-            throw new Error('Usuário já cadastrado na aplicação.');
+            logger.warn(`Usuario ja cadastrado ${email}`);
+            throw new Error('Usuario ja cadastrado na aplicacao.');
         }
 
-        logger.info('Início do processo de cadastro do usuário.');
-        // criptografando a senha do usuário.
+        logger.info('Inicio do processo de cadastro do usuario.');
+        // criptografando a senha do usuario.
         const cryptPassword = await bcrypt.hash(senha, 10);
 
         // adicionando o usuario
@@ -52,10 +52,10 @@ exports.registrarUsuario = async (nome, email, senha) => {
             JWT_SECRET_KEY,
             {expiresIn: '40min'}
         );
-        logger.info('Usuário cadastrado com Sucesso.', {nome, email});
+        logger.info('Usuario cadastrado com sucesso.', {nome, email});
         return { novoUsuario, token };
     } catch (error) {
-        logger.error('Error ao cadastrar usuário', {
+        logger.error('Error ao cadastrar usuario', {
             error: error.message,
             email
         });
@@ -65,10 +65,10 @@ exports.registrarUsuario = async (nome, email, senha) => {
 
 exports.buscarUsuarios = () => {
     try {
-        logger.info('Usuários listados com sucesso.', {count: usuarios.lenght});
+        logger.info('Usuarios listados com sucesso.', {count: usuarios.lenght});
         return usuarios;
     } catch (error) {
-        logger.error('Error ao buscar os usuários', {
+        logger.error('Error ao buscar os usuarios', {
             error: error.message,
         });
         throw error
@@ -78,20 +78,20 @@ exports.buscarUsuarios = () => {
 exports.login = async (email, senha) => {
     try {
         if (!email || !senha) {
-            logger.error('email e senha são obrigatórios');
+            logger.error('email e senha são obrigatorios');
             throw new Error('email ou password não encontrados.');
         }
-        // procurando o usuário
+        // procurando o usuario
         const usuarioLogin = usuarios.find((user) => user.email === email);
         if (!usuarioLogin) {
-            logger.error(`Usuário não encontrado ${usuarioLogin}`);
-            throw new Error('Usuário não encontrado no sistema.');
+            logger.error(`Usuario nao encontrado ${usuarioLogin}`);
+            throw new Error('Usuario nao encontrado no sistema.');
         }
         // comparando as senhas
         const validSenha = await bcrypt.compare(senha, usuarioLogin.senha);
         if (!validSenha) {
-            logger.error(`Senha inválida!`);
-            throw new Error('Senha inválida para este usuário.');
+            logger.error(`Senha invalida!`);
+            throw new Error('Senha invalida para este usuario.');
         }
 
         const token = jwt.sign(
@@ -102,7 +102,7 @@ exports.login = async (email, senha) => {
 
         return {usuarioLogin, token};
     } catch (error) {
-        logger.error('Error ao cadastrar usuário', {
+        logger.error('Error ao cadastrar usuario', {
             error: error.message,
             email
         });
