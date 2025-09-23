@@ -27,13 +27,13 @@ const autenticarToken = (req, res, next) => {
             req.user = user;
             console.log('Usuario autorizado!');
             console.log('ID: ', req.user.id);
-            console.log('nome: ', req.user.nome);
+            //console.log('nome: ', req.user.name);
             console.log('email', req.user.email);
             next();
         })
 
     } catch (error) {
-        logger.error(`Erro na autenticacao da token`, error);
+        logger.error(`Erro na autenticacao da token - ${error}`);
         res.status(500).json({
             error: 'Erro interno do servidor!'
         });

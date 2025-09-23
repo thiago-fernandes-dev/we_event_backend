@@ -1,11 +1,10 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const usuarios = require('../../baseDados/tempUsers');
+const prisma = require('../db/prisma');
 const logger = require('../shared/logger/logger');
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET;
-let IDUsuario = 1;
 
 if (!JWT_SECRET_KEY) {
     logger.error('JWT SECRET nao carregado!');
@@ -23,8 +22,8 @@ exports.registrarUsuario = async (nome, email, senha) => {
             throw new Error('senha deve possuir pelo menos 6 digitos');
         }
         // verificar se usuario já existe na base de dados.
-        const user = usuarios.find((user) => user.email === email);
-        if (user) {
+        const existeUsuario = await prisma.usuarios.findUnique({ where: { email }})
+        if (existeUsuario) {
             logger.warn(`Usuario ja cadastrado ${email}`);
             throw new Error('Usuario ja cadastrado na aplicacao.');
         }
@@ -34,21 +33,17 @@ exports.registrarUsuario = async (nome, email, senha) => {
         const cryptPassword = await bcrypt.hash(senha, 10);
 
         // adicionando o usuario
-        const novoUsuario = {
-            id: ++IDUsuario,
-            nome,
-            email,
-            senha: cryptPassword,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            status: 'active'
-        };
-        usuarios.push(novoUsuario);
-
+        const novoUsuario = await prisma.usuarios.create({
+            data: {
+                name: nome,
+                email,
+                senha: cryptPassword,
+            },
+        });
 
         // gerando o JWT
         const token = jwt.sign(
-            {id: novoUsuario.id, email: novoUsuario.email, nome: novoUsuario.nome},
+            {id: novoUsuario.id, email: novoUsuario.email, nome: novoUsuario.name},
             JWT_SECRET_KEY,
             {expiresIn: '40min'}
         );
@@ -63,9 +58,14 @@ exports.registrarUsuario = async (nome, email, senha) => {
     }
 }
 
-exports.buscarUsuarios = () => {
+exports.buscarUsuarios = async () => {
     try {
-        logger.info('Usuarios listados com sucesso.', {count: usuarios.lenght});
+        const usuarios = await prisma.usuarios.findMany();
+        if(!usuarios){
+            logger.warn(`A lista de usuarios nao foi encontrada.`);
+            throw new Error('Erro na busca por usuarios.');
+        }
+        logger.info(`Usuarios encontrados com sucesso. Qtde: ${usuarios.length}`);
         return usuarios;
     } catch (error) {
         logger.error('Error ao buscar os usuarios', {
@@ -82,27 +82,29 @@ exports.login = async (email, senha) => {
             throw new Error('email ou password não encontrados.');
         }
         // procurando o usuario
-        const usuarioLogin = usuarios.find((user) => user.email === email);
-        if (!usuarioLogin) {
-            logger.error(`Usuario nao encontrado ${usuarioLogin}`);
+        const existeUsuario = await prisma.usuarios.findUnique({ where: { email }})
+        if (!existeUsuario) {
+            logger.error(`Usuario nao encontrado ${email}`);
             throw new Error('Usuario nao encontrado no sistema.');
+        } else {
+            logger.info(`Usuario encontrado: ${existeUsuario.name}:${existeUsuario.email}`);
         }
         // comparando as senhas
-        const validSenha = await bcrypt.compare(senha, usuarioLogin.senha);
+        const validSenha = await bcrypt.compare(senha, existeUsuario.senha);
         if (!validSenha) {
             logger.error(`Senha invalida!`);
             throw new Error('Senha invalida para este usuario.');
         }
 
         const token = jwt.sign(
-            {id: usuarioLogin.id, email: usuarioLogin.email, nome: usuarioLogin.nome},
+            {id: existeUsuario.id, email: existeUsuario.email, nome: existeUsuario.name},
             JWT_SECRET_KEY,
             {expiresIn: '40min'}
         );
 
-        return {usuarioLogin, token};
+        return {existeUsuario, token};
     } catch (error) {
-        logger.error('Error ao cadastrar usuario', {
+        logger.error('Error ao tentar fazer o login do usuario', {
             error: error.message,
             email
         });
