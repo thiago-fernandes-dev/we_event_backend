@@ -1,4 +1,5 @@
 const usuarioService = require('./usuarios.services.js');
+const eventos = require('../../baseDados/tempEventos.js'); // caminho relativo ao seu arquivo
 
 exports.getUsuariosController = async (req,  res)=>{
     try{
@@ -47,5 +48,15 @@ exports.atualizarUsuarioController = async (req, res)=>{
         res.status(200).json({message: "usuario atualizado com sucesso"});
     }catch (error){
         res.status(500).json({message: "Server Internal Error"});
+    }
+};
+// Novo controller para retornar eventos de um usuário
+exports.getEventosUsuarioController = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const userEventos = eventos.find(e => e.usuarioId === id);
+        res.status(200).json(userEventos?.eventos || []);
+    } catch (error) {
+        res.status(500).json({ message: "Server Internal Error" });
     }
 };

@@ -34,8 +34,8 @@ const atualizarUsuario = (id, nome, email, senha)=>{
         return;
     }else{
         usuario.nome = nome || usuario.nome;
-        usuario.preco = email || usuario.email;
-        usuario.descricao = senha || usuario.senha;
+        usuario.email = email || usuario.email;
+        usuario.senha = senha || usuario.senha;
     }
 };
 
