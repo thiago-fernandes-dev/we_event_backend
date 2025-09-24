@@ -7,7 +7,7 @@ const cors = require('cors');
 const PORT = process.env.PORT || 3450;
 const corsOptions = {
     origin: function (origin, callback){
-        const recursoPermitido = ['http://localhost:5173'];
+        const recursoPermitido = ['http://localhost:5173', 'http://localhost:3002', 'http://localhost:3450'];
         if(!origin) return callback(null,true);
         if(recursoPermitido.indexOf(origin) !== -1){
             return callback(null, true);
@@ -28,7 +28,7 @@ const corsOptions = {
     ],
     exposedHeaders: ['X-Correlation-ID'],
 }
-
+app.use(cors(corsOptions));
 app.use(express.json());
 const usuariosRoutes = require('./modules/usuarios/usuarios.routes');
 const usuariosAuthRoutes = require('./modules/auth/usuarios.routes');
@@ -36,7 +36,6 @@ const comprasRoutes= require('./modules/compras/compras.routes');
 app.use('/api', usuariosRoutes);
 app.use('/api/auth', usuariosAuthRoutes);
 app.use('/api/compras', comprasRoutes);
-app.use(cors(corsOptions));
 
 logger.info(
     'Start Server Application', {

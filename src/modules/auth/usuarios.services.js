@@ -50,7 +50,7 @@ exports.registrarUsuario = async (nome, email, senha) => {
         logger.info('Usuario cadastrado com sucesso.', {nome, email});
         return { novoUsuario, token };
     } catch (error) {
-        logger.error('Error ao cadastrar usuario', {
+        logger.error('Erro ao cadastrar usuario', {
             error: error.message,
             email
         });
@@ -68,7 +68,7 @@ exports.buscarUsuarios = async () => {
         logger.info(`Usuarios encontrados com sucesso. Qtde: ${usuarios.length}`);
         return usuarios;
     } catch (error) {
-        logger.error('Error ao buscar os usuarios', {
+        logger.error('Erro ao buscar os usuarios', {
             error: error.message,
         });
         throw error

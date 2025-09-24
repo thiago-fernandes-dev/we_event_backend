@@ -6,18 +6,18 @@ exports.registrarUsuariosController = async (req, res) => {
 
         if (!nome || !email || !senha) {
             return res.status(400).json({
-                error: 'campos obrigatórios incompletos'
+                error: 'campos obrigatorios incompletos'
             });
         }
 
         const novoUsuario = await usuarioServices.registrarUsuario(nome, email, senha);
 
         res.status(200).json({
-            message: 'Usuário registrado com sucesso!',
+            message: 'Usuario registrado com sucesso!',
             novoUsuario
         });
     } catch (error) {
-        console.error(`Erro ao tentar cadastrar um Usuário.`);
+        console.error(`Erro ao tentar cadastrar um Usuario.`);
         res.status(500).json('Erro Interno do Servidor.')
     }
 };
@@ -28,7 +28,7 @@ exports.loginController = async (req, res) => {
 
         if (!email || !senha) {
             return res.status(400).json({
-                error: 'campos obrigatórios incompletos - email ou senha'
+                error: 'campos obrigatorios incompletos - email ou senha'
             });
         }
 
@@ -36,11 +36,11 @@ exports.loginController = async (req, res) => {
 
         res.status(200).json({
             message: 'login realizado com sucesso.',
-            user: result.usuarioLogin,
+            user: result.existeUsuario,
             token: result.token
         });
     } catch (error) {
-        console.error(`Erro ao tentar logar na aplicação.`);
+        console.error(`Erro ao tentar logar na aplicacao.`);
         res.status(500).json('Erro Interno do Servidor.');
     }
 };
@@ -52,7 +52,7 @@ exports.buscarUsuariosController = (req, res) => {
             usuarios
         });
     } catch (error) {
-        console.error(`Erro ao acessar os usuários.`);
+        console.error(`Erro ao acessar os usuarios.`);
         res.status(500).json('Erro Interno do Servidor.');
     }
 };
